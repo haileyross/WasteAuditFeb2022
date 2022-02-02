@@ -1,5 +1,4 @@
 can_number,pieces_trash,pieces_recycle,pieces_compost,total_piece_volume,weight_trash_lbs,weight_recycle_lbs,weight_compost_lbs,total_can_weight,original_stream,time_collected,notes_stream,notes_contaminants,prop_pieces_trash,prop_pieces_recycle,prop_pieces_compost,prop_trash_weight,prop_recycle_weight,prop_compost_weight,big_belly_compactor,plaza_top,plaza_bottom,zwelis,loop
-Can Number,Pieces of Trash,Pieces of Recycle,Pieces of Compost,Total Volume Pieces,Sorted Trash Weight (lbs),Sorted Recycle Weight (lbs),Sorted Compost Weight (lbs),Total Weight (lbs),Original Waste Stream Designation,Time Collected,notes about original stream/location,"Notes (common contaminants,...)",% Trash Pieces,% Recycle Pieces,% Compost Pieces,% Trash Weight,% Recycle Weight,% Compost Weight,,,,,
 1,35,8,37,80,1.4,0,1.2,2.6,trash,1/31/2022 3:36,,,43.75%,10.00%,46.25%,53.85%,0.00%,46.15%,F,F,F,F,T
 2,16,6,52,74,4.8,0,3,7.8,trash,1/31/2022 3:25,,,21.62%,8.11%,70.27%,61.54%,0.00%,38.46%,F,F,F,F,T
 3,36,0,52,88,1.2,0,2.6,3.8,trash,1/31/2022 3:41,,,40.91%,0.00%,59.09%,31.58%,0.00%,68.42%,F,F,F,F,T
