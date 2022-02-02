@@ -1,4 +1,4 @@
-can_number,pieces_trash,pieces_recycle,pieces_compost,total_piece_volume,weight_trash_lbs,weight_recycle_lbs,weight_compost_lbs,total_can_weight,original_stream,multiple_streams_bin,,NA,NA,NA,NA,NA,NA,NA,big_belly_compactor,near_stairwell,near_exit,near_seating,bc_plaza_top,bc_plaza_bottom,zwelis,loop,x_coordinate,y_coordinate,collection_time
+can_number,pieces_trash,pieces_recycle,pieces_compost,total_piece_volume,weight_trash_lbs,weight_recycle_lbs,weight_compost_lbs,total_can_weight,original_stream,multiple_streams_bin,big_belly_compactor,near_stairwell,near_exit,near_seating,bc_plaza_top,bc_plaza_bottom,zwelis,loop,x_coordinate,y_coordinate,collection_time
 1,35,8,37,80,1.4,0,1.2,2.6,trash,1/31/2022 3:36,,,43.75%,10.00%,46.25%,53.85%,0.00%,46.15%,,,,,,,,,,,
 2,16,6,52,74,4.8,0,3,7.8,trash,1/31/2022 3:25,,,21.62%,8.11%,70.27%,61.54%,0.00%,38.46%,,,,,,,,,,,
 3,36,0,52,88,1.2,0,2.6,3.8,trash,1/31/2022 3:41,,,40.91%,0.00%,59.09%,31.58%,0.00%,68.42%,,,,,,,,,,,
