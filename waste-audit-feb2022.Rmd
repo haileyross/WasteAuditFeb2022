@@ -26,3 +26,83 @@ library(tinytex)
 library(sf)
 ```
 
+```{r upload-and-clean-data}
+waste_audit <- Spring_2022_February_Waste_Audit_Data_Sheet_xlsx_Figures_1_ %>% 
+  select(-c(notes_contaminants, notes_stream)) %>% 
+  slice(1:41, 45, 47, 48) %>% 
+  select(-prop_pieces_trash, -prop_pieces_recycle, -prop_pieces_compost, -prop_trash_weight, -prop_recycle_weight, -prop_compost_weight) %>% 
+  mutate(prop_pieces_trash = pieces_trash / total_piece_volume,
+         prop_pieces_recycle = pieces_recycle / total_piece_volume,
+         prop_pieces_compost = pieces_compost / total_piece_volume,
+         prop_trash_weight = weight_trash_lbs / total_can_weight,
+         prop_recycle_weight = weight_recycle_lbs / total_can_weight,
+         prop_compost_weight = weight_compost_lbs / total_can_weight)
+
+view(waste_audit)
+```
+# Methodology
+
+## Content Comparisons
+- average weight of a piece of trash, composting, and recycling item
+```{r average-piece-weight}
+waste_audit %>% 
+  summarize(total_trash_pieces = sum(pieces_trash),
+            total_recycle_pieces = sum(pieces_recycle),
+            total_compost_pieces = sum(pieces_compost),
+            total_trash_weight = sum(weight_trash_lbs), 
+            total_recycle_weight = sum(weight_recycle_lbs),
+            total_compost_weight = sum(weight_compost_lbs)) %>% 
+  summarize(average_trash_weight = total_trash_weight / total_trash_pieces,
+            average_recycle_weight = total_recycle_weight / total_recycle_pieces,
+            average_compost_weight = total_compost_weight / total_compost_pieces)
+```
+
+- comparative starting volume of pieces/weight between trash, recycle, and
+compost streams
+```{r starting-volumes}
+waste_audit %>% 
+  group_by(original_stream) %>% 
+  summarize(avg_starting_weight = mean(total_can_weight),
+            avg_starting_pieces = mean(total_piece_volume))
+```
+
+SOMETHING WRONG WITH THIS BAR GRAPH - TRASH & RECYCLING SHOULD BE THE TALLEST
+```{r bar-plot-original-stream-piece-comparison}
+data <- waste_audit %>% 
+  group_by(original_stream) %>% 
+  summarize(total_trash = sum(pieces_trash),
+            total_recycle = sum(pieces_recycle),
+            total_compost = sum(pieces_compost)) %>% 
+  select(total_trash, total_recycle, total_compost)
+data <- as.matrix(data)
+colnames(data) <- c("trash", "recycle", "compost")
+rownames(data) <- c("Recycle", "Trash", "Compost")
+color <- c("black", "#3265ab", "#2ca816")
+barplot(t(data), beside = FALSE, col = color, ylim = c(0, 2500),
+        main = "Actual Waste Composition of Trash, Recycling, and Compost (in pieces)", xlab = "Original Stream Designation", ylab = "Total Pieces")
+  legend("topleft", colnames(data), pch = 15, col = color, horiz = T, bty = "n")
+# source: https://stackoverflow.com/questions/61506408/grouped-barchart-in-r-with-4-variables
+```
+
+## Quantifying Missorted Waste
+```{r missorted}
+waste_audit <- waste_audit %>% 
+  mutate(perc_missorted_c = case_when(original_stream == "Trash" ~ (pieces_recycle + pieces_compost) / total_piece_volume, original_stream == "Recycling" ~ (pieces_trash + pieces_compost) / total_piece_volume, original_stream == "Compost" ~ (pieces_trash + pieces_recycle) / total_piece_volume))
+```
+
+BELOW IS UNDONE
+```{r bar-plot-original-stream-percent}
+makeup <- waste_audit %>% 
+  group_by(original_stream) %>% 
+  summarize(average_trash = mean(prop_pieces_trash),
+            average_recycle = mean(prop_pieces_recycle),
+            average_compost = mean(prop_pieces_compost)) %>% 
+  select(average_trash, average_recycle, average_compost)
+makeup <- as.matrix(makeup)
+colnames(makeup) <- c("trash", "recycle", "compost")
+rownames(makeup) <- c("Recycle", "Trash")
+color <- c("black", "#3265ab", "#2ca816")
+barplot(t(makeup), beside = FALSE, col = color, ylim = c(0, 1.1),
+        main = "Percent Actual Waste Composition in Trash and Recycling", xlab = "Original Stream Designation", ylab = "Percent")
+legend("topleft", colnames(makeup), pch = 15, col = color, horiz = T, bty = "n")
+```
