@@ -85,6 +85,7 @@ barplot(t(data), beside = FALSE, col = color, ylim = c(0, 2500),
 ```
 
 ## Quantifying Missorted Waste
+ERROR WITH PERC_MISSORTED_C
 ```{r missorted}
 waste_audit <- waste_audit %>% 
   mutate(perc_missorted_c = case_when(original_stream == "Trash" ~ (pieces_recycle + pieces_compost) / total_piece_volume, original_stream == "Recycling" ~ (pieces_trash + pieces_compost) / total_piece_volume, original_stream == "Compost" ~ (pieces_trash + pieces_recycle) / total_piece_volume))
@@ -257,11 +258,11 @@ pie(slices, labels = lbls, col = c("#2ca816", "black"), main = "Percent of Compo
 
 - volume of compostables
     bar graph, value
-    HAVE NOT LOOKED BELOW
+    
 ```{r compost-volume-values}
 volume_bar <- waste_audit %>% 
   summarize(total_pieces_compost = sum(pieces_compost),
-            total_weight_compost = sum(weight_compost),
+            total_weight_compost = sum(weight_compost_lbs),
             total_pieces_audited = sum(total_piece_volume),
             total_weight_audited = sum(total_can_weight),
             perc_pieces_compost = total_pieces_compost / total_pieces_audited * 100,
@@ -320,7 +321,8 @@ more conservative than normal distribution; weight on tail ends
 mean(waste_audit$perc_missorted_c) + c(-1, 1) * 2.05 * sd(waste_audit$perc_missorted_c) / sqrt(22)
 ```
 
-tdist: 0.7146358, 0.7902705
+may need to change the code above???
+tdist last year: 0.7146358, 0.7902705
 
 # Discussion
 
