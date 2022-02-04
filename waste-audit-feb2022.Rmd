@@ -100,9 +100,186 @@ makeup <- waste_audit %>%
   select(average_trash, average_recycle, average_compost)
 makeup <- as.matrix(makeup)
 colnames(makeup) <- c("trash", "recycle", "compost")
-rownames(makeup) <- c("Recycle", "Trash")
+rownames(makeup) <- c("Recycle", "Trash", "Compost")
 color <- c("black", "#3265ab", "#2ca816")
 barplot(t(makeup), beside = FALSE, col = color, ylim = c(0, 1.1),
-        main = "Percent Actual Waste Composition in Trash and Recycling", xlab = "Original Stream Designation", ylab = "Percent")
+        main = "Percent Actual Waste Composition in Trash, Recycling, and Compost", xlab = "Original Stream Designation", ylab = "Percent")
 legend("topleft", colnames(makeup), pch = 15, col = color, horiz = T, bty = "n")
 ```
+
+- percent of trash that is missorted
+
+```{r missorted-trash}
+pie_trash <- waste_audit %>% 
+  mutate(missorted = pieces_recycle + pieces_compost) %>% 
+  group_by(original_stream) %>% 
+  summarize(sorted = sum(pieces_trash),
+            missorted = sum(missorted)) %>% 
+  slice(2)
+pie_trash
+slices <- c(183, 261)
+lbls <- c("properly sorted", "missorted")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Missorted Trash")
+
+# source: https://www.statmethods.net/graphs/pie.html
+```
+
+- percent of recycling that is missorted
+    
+```{r missorted-recycle}
+pie_recycle <- waste_audit %>% 
+  mutate(missorted = pieces_trash + pieces_compost) %>% 
+  group_by(original_stream) %>% 
+  summarize(sorted = sum(pieces_recycle),
+            missorted = sum(missorted)) %>% 
+  slice(1)
+pie_recycle
+slices <- c(31, 434)
+lbls <- c("properly sorted", "missorted")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Missorted Recycle")
+```
+
+- percent of compost that is missorted
+    
+```{r missorted-recycle}
+pie_compost <- waste_audit %>% 
+  mutate(missorted = pieces_trash + pieces_recycle) %>% 
+  group_by(original_stream) %>% 
+  summarize(sorted = sum(pieces_compost),
+            missorted = sum(missorted)) %>% 
+  slice(1)
+pie_compost
+slices <- c(282, 183)
+lbls <- c("properly sorted", "missorted")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Missorted Compost")
+```
+
+## Campus Compost
+- percent of trash and recycling that could be compost
+    HAVE NOT LOOKED AT THE ONES BELOW
+```{r compost-in-trash}
+compostable_trash <- waste_audit %>% 
+  mutate(noncompostable = pieces_recycle + pieces_trash) %>% 
+  group_by(original_stream) %>% 
+  summarize(compostable = sum(pieces_compost),
+            noncompostable = sum(noncompostable)) %>% 
+  slice(2)
+compostable_trash
+slices <- c(1274, 920)
+lbls <- c("compostable", "noncompostable")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "black"), main = "Percent of Trash that is Actually Compostable")
+```
+
+```{r compost-in-recycling}
+compostable_recycle <- waste_audit %>% 
+  mutate(noncompostable = pieces_recycle + pieces_trash) %>% 
+  group_by(original_stream) %>% 
+  summarize(compostable = sum(pieces_compost),
+            noncompostable = sum(noncompostable)) %>% 
+  slice(1)
+compostable_recycle
+slices <- c(320, 343)
+lbls <- c("compostable", "noncompostable")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "black"), main = "Percent of Recycling that is Actually Compostable")
+```
+
+- volume of compostables
+    bar graph, value
+    
+```{r compost-volume-values}
+volume_bar <- waste_audit %>% 
+  summarize(total_pieces_compost = sum(pieces_compost),
+            total_weight_compost = sum(weight_compost),
+            total_pieces_audited = sum(total_piece_volume),
+            total_weight_audited = sum(total_can_weight),
+            perc_pieces_compost = total_pieces_compost / total_pieces_audited * 100,
+            perc_weight_compost = total_weight_compost / total_weight_audited * 100)
+makeup <- as.matrix(volume_bar)
+volume_bar <- volume_bar %>% 
+  select(perc_pieces_compost, perc_weight_compost)
+colnames(volume_bar) <- c("Pieces", "Weight (lbs)")
+color <- c("#2ca816", "#8cd9b3")
+barplot(t(volume_bar), beside = TRUE, col = color, ylim = c(0, 100),
+        main = "Percent of Total Waste that is Actually Compostable by Piece Count and Weight", xlab = "Method of Quantifying Waste", ylab = "Percent")
+legend("topleft", colnames(volume_bar), pch = 15, col = color, horiz = T, bty = "n")
+```
+
+## Differences in Location
+CREATE CODE FOR THIS SECTION
+
+separate based on Loop, Zweli's, and BC Plaza
+summary amounts -- how much waste sorted
+contamination rates
+
+# Bootstrap Sample
+
+null hypothesis and alternative hypothesis
+
+bootstrap sample
+
+```{r bootstrap-sample-with-compost}
+set.seed(405)
+boot_missorted <- waste_audit %>% 
+  specify(response = perc_missorted_c) %>% 
+  generate(reps = 10000, type = "bootstrap") %>% 
+  calculate(stat = "mean")
+```
+
+confidence interval
+
+```{r confidence-interval-with-compost}
+ci_boot_missorted <- get_ci(boot_missorted, level = 0.95)
+ci_boot_missorted
+```
+
+bootstrap distribution
+
+```{r bootstrap-vis-with-compost}
+visualize(boot_missorted) +
+  shade_ci(ci_boot_missorted) +
+  labs(title = "Simulated Bootstrap Distribution", x = "Sample Mean", y = "Count")
+```
+
+$\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
+
+more conservative than normal distribution; weight on tail ends
+
+```{r t-distribution-with-compost, eval = FALSE}
+mean(waste_audit$perc_missorted_c) + c(-1, 1) * 2.05 * sd(waste_audit$perc_missorted_c) / sqrt(22)
+```
+
+tdist: 0.7146358, 0.7902705
+
+# Discussion
+
+- error: human error in sorting
+- error: some contamination spreads (e.g. containers filled with liquid)
+- discuss time of day and year that the data was collected
+- note: this does not account for all waste; waste disposed of in dorms, WU conveyor belt, BC, library, quad trash bins, gym (Red Mango), East Campus (Marketplace, dorms)
+- semi-random sampling (all recycling bins chosen, which dictated our choices in picking from the trash bins
+- error: subjectivity in what it means to be proximal to an exit door, stairwell mouth, etc.
