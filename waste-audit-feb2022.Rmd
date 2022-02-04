@@ -37,8 +37,6 @@ waste_audit <- Spring_2022_February_Waste_Audit_Data_Sheet_xlsx_Figures_1_ %>%
          prop_trash_weight = weight_trash_lbs / total_can_weight,
          prop_recycle_weight = weight_recycle_lbs / total_can_weight,
          prop_compost_weight = weight_compost_lbs / total_can_weight)
-
-view(waste_audit)
 ```
 # Methodology
 
@@ -85,13 +83,11 @@ barplot(t(data), beside = FALSE, col = color, ylim = c(0, 2500),
 ```
 
 ## Quantifying Missorted Waste
-ERROR WITH PERC_MISSORTED_C
 ```{r missorted}
 waste_audit <- waste_audit %>% 
-  mutate(perc_missorted_c = case_when(original_stream == "Trash" ~ (pieces_recycle + pieces_compost) / total_piece_volume, original_stream == "Recycling" ~ (pieces_trash + pieces_compost) / total_piece_volume, original_stream == "Compost" ~ (pieces_trash + pieces_recycle) / total_piece_volume))
+  mutate(perc_missorted_c = case_when(original_stream == "trash" ~ (pieces_recycle + pieces_compost) / total_piece_volume, original_stream == "recycling" ~ (pieces_trash + pieces_compost) / total_piece_volume, original_stream == "compost" ~ (pieces_trash + pieces_recycle) / total_piece_volume))
 ```
 
-BELOW IS UNDONE
 ```{r bar-plot-original-stream-percent}
 makeup <- waste_audit %>% 
   group_by(original_stream) %>% 
@@ -318,11 +314,11 @@ $\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
 more conservative than normal distribution; weight on tail ends
 
 ```{r t-distribution-with-compost, eval = FALSE}
-mean(waste_audit$perc_missorted_c) + c(-1, 1) * 2.05 * sd(waste_audit$perc_missorted_c) / sqrt(22)
+mean(waste_audit$perc_missorted_c) + c(-1, 1) * 2.05 * sd(waste_audit$perc_missorted_c) / sqrt(44)
 ```
 
 may need to change the code above???
-tdist last year: 0.7146358, 0.7902705
+tdist: 0.5332373, 0.6429630
 
 # Discussion
 
