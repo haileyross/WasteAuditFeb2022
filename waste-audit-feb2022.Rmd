@@ -170,17 +170,42 @@ pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Missorted Comp
 ```
 
 ## Campus Compost
-- percent of trash and recycling that could be compost
-    HAVE NOT LOOKED AT THE ONES BELOW
+- percent of all waste that could be compost
+    
+```{r compost-in-total-waste}
+compostable_count <- waste_audit %>% 
+  mutate(noncompostable = pieces_recycle + pieces_trash) %>% 
+  group_by(original_stream) %>% 
+  summarize(compostable = sum(pieces_compost),
+            noncompostable = sum(noncompostable))
+compostable_count
+
+compostables <- waste_audit %>% 
+  mutate(noncompostable = pieces_recycle + pieces_trash) %>% 
+  summarize(compostable = sum(pieces_compost),
+            noncompostable = sum(noncompostable))
+compostables
+slices <- c(1647, 1383)
+lbls <- c("compostable", "noncompostable")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "black"), main = "Percent of Total Waste that is Actually Compostable")
+```
+
+ - percent of trash that could be compost
+
 ```{r compost-in-trash}
 compostable_trash <- waste_audit %>% 
   mutate(noncompostable = pieces_recycle + pieces_trash) %>% 
   group_by(original_stream) %>% 
   summarize(compostable = sum(pieces_compost),
             noncompostable = sum(noncompostable)) %>% 
-  slice(2)
+  slice(3)
 compostable_trash
-slices <- c(1274, 920)
+slices <- c(1209, 912)
 lbls <- c("compostable", "noncompostable")
 percent <- slices / sum(slices) * 100
 percent
@@ -190,15 +215,17 @@ lbls <-paste(lbls, "%", sep = " ")
 pie(slices, labels = lbls, col = c("#2ca816", "black"), main = "Percent of Trash that is Actually Compostable")
 ```
 
+ - percent of recycling that could be compost
+
 ```{r compost-in-recycling}
 compostable_recycle <- waste_audit %>% 
   mutate(noncompostable = pieces_recycle + pieces_trash) %>% 
   group_by(original_stream) %>% 
   summarize(compostable = sum(pieces_compost),
             noncompostable = sum(noncompostable)) %>% 
-  slice(1)
+  slice(2)
 compostable_recycle
-slices <- c(320, 343)
+slices <- c(156, 288)
 lbls <- c("compostable", "noncompostable")
 percent <- slices / sum(slices) * 100
 percent
@@ -208,9 +235,29 @@ lbls <-paste(lbls, "%", sep = " ")
 pie(slices, labels = lbls, col = c("#2ca816", "black"), main = "Percent of Recycling that is Actually Compostable")
 ```
 
+ - percent of compost that is supposed to be composted
+
+```{r compost-in-compost}
+compostable_compost <- waste_audit %>% 
+  mutate(noncompostable = pieces_recycle + pieces_trash) %>% 
+  group_by(original_stream) %>% 
+  summarize(compostable = sum(pieces_compost),
+            noncompostable = sum(noncompostable)) %>% 
+  slice(1)
+compostable_compost
+slices <- c(282, 183)
+lbls <- c("compostable", "noncompostable")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "black"), main = "Percent of Compost that is Actually Compostable")
+```
+
 - volume of compostables
     bar graph, value
-    
+    HAVE NOT LOOKED BELOW
 ```{r compost-volume-values}
 volume_bar <- waste_audit %>% 
   summarize(total_pieces_compost = sum(pieces_compost),
