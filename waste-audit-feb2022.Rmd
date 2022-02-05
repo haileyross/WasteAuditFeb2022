@@ -346,14 +346,14 @@ lbls <-paste(lbls, "%", sep = " ")
 pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Contamination at The Loop")
 ```
 
-# Bootstrap Sample
+# Bootstrap Samples
 
-null hypothesis and alternative hypothesis
+## OVERALL WASTE
 
 bootstrap sample
 
 ```{r bootstrap-sample-with-compost}
-set.seed(405)
+set.seed(201)
 boot_missorted <- waste_audit %>% 
   specify(response = perc_missorted_c) %>% 
   generate(reps = 10000, type = "bootstrap") %>% 
@@ -372,7 +372,7 @@ bootstrap distribution
 ```{r bootstrap-vis-with-compost}
 visualize(boot_missorted) +
   shade_ci(ci_boot_missorted) +
-  labs(title = "Simulated Bootstrap Distribution", x = "Sample Mean", y = "Count")
+  labs(title = "Simulated Bootstrap Distribution of Overall Missorted Waste", x = "Sample Mean", y = "Count")
 ```
 
 $\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
