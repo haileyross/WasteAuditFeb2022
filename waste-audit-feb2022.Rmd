@@ -1,11 +1,12 @@
 ---
 title: "February 2022 Waste Audit"
-author: ""
+author: ''
 subtitle: Duke Sustainability Task Force
 output:
   pdf_document: default
   html_document:
     df_print: paged
+  word_document: default
 ---
 
 ```{r setup, echo=FALSE}
@@ -27,7 +28,7 @@ library(sf)
 ```
 
 ```{r upload-and-clean-data}
-waste_audit <- Spring_2022_February_Waste_Audit_Data_Sheet_xlsx_Figures_1_ %>% 
+waste_audit %>% 
   select(-c(notes_contaminants, notes_stream)) %>% 
   slice(1:41, 45, 47, 48) %>% 
   select(-prop_pieces_trash, -prop_pieces_recycle, -prop_pieces_compost, -prop_trash_weight, -prop_recycle_weight, -prop_compost_weight) %>% 
@@ -42,7 +43,6 @@ waste_audit <- Spring_2022_February_Waste_Audit_Data_Sheet_xlsx_Figures_1_ %>%
     can_number %in% c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22) ~ "Loop",
     can_number %in% c(38, 39, 40, 30, 39, 31, 29, 47, 48, 45, 41, 35, 36, 37, 34, 32, 33) ~ "Plaza"
   ))
-# as.character(restaurant)
 ```
 # Methodology
 
@@ -155,7 +155,7 @@ pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Missorted Recy
 
 - percent of compost that is missorted
     
-```{r missorted-recycle}
+```{r missorted-compost}
 pie_compost <- waste_audit %>% 
   mutate(missorted = pieces_trash + pieces_recycle) %>% 
   group_by(original_stream) %>% 
@@ -292,7 +292,7 @@ location_contamination
 
 contamination at Zweli's Café
 
-```{r loop-contamination}
+```{r zwelis-contamination}
 slices <- c(172, 254)
 lbls <- c("properly sorted", "missorted")
 percent <- slices / sum(slices) * 100
@@ -305,7 +305,7 @@ pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Contamination 
 
 contamination at BC
 
-```{r loop-contamination}
+```{r plaza-contamination}
 slices <- c(589, 938)
 lbls <- c("properly sorted", "missorted")
 percent <- slices / sum(slices) * 100
