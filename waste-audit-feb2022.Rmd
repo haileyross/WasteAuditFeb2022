@@ -388,7 +388,6 @@ more conservative than normal distribution; weight on tail ends
 mean(waste_audit$perc_missorted_c) + c(-1, 1) * 2.05 * sd(waste_audit$perc_missorted_c) / sqrt(44)
 ```
 
-may need to change the code above??? ASK LEAH
 tdist: 0.5332373, 0.6429630
 
 # Discussion
