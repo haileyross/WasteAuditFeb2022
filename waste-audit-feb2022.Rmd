@@ -28,7 +28,7 @@ library(sf)
 ```
 
 ```{r upload-and-clean-data}
-waste_audit %>% 
+waste_audit <- read.csv(file = 'feb2022data.csv') %>% 
   select(-c(notes_contaminants, notes_stream)) %>% 
   slice(1:41, 45, 47, 48) %>% 
   select(-prop_pieces_trash, -prop_pieces_recycle, -prop_pieces_compost, -prop_trash_weight, -prop_recycle_weight, -prop_compost_weight) %>% 
@@ -111,6 +111,26 @@ barplot(t(makeup), beside = FALSE, col = color, ylim = c(0, 1.1),
 legend("topleft", colnames(makeup), pch = 15, col = color, horiz = T, bty = "n")
 ```
 
+- percent of total waste that is missorted
+SEE T-DISTRIBUTION FOR STATISTICALLY VALID NUMBERS -- this pie is just raw data
+
+```{r missorted-total-waste}
+pie_total <- waste_audit %>% 
+  summarize(sorted = sum(sorted_count),
+            missorted = sum(missorted_count))
+pie_total
+slices <- c(1170, 1860)
+lbls <- c("properly sorted", "missorted")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Overall Contamination for All Streams")
+
+# source: https://www.statmethods.net/graphs/pie.html
+```
+
 - percent of trash that is missorted
 
 ```{r missorted-trash}
@@ -118,10 +138,10 @@ pie_trash <- waste_audit %>%
   mutate(missorted = pieces_recycle + pieces_compost) %>% 
   group_by(original_stream) %>% 
   summarize(sorted = sum(pieces_trash),
-            missorted = sum(missorted)) %>% 
-  slice(2)
+            missorted = sum(missorted)) %>%
+  slice(3)
 pie_trash
-slices <- c(183, 261)
+slices <- c(783, 1338)
 lbls <- c("properly sorted", "missorted")
 percent <- slices / sum(slices) * 100
 percent
@@ -129,8 +149,6 @@ pct <- round(percent)
 lbls <- paste(lbls, pct)
 lbls <-paste(lbls, "%", sep = " ")
 pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Missorted Trash")
-
-# source: https://www.statmethods.net/graphs/pie.html
 ```
 
 - percent of recycling that is missorted
@@ -140,10 +158,10 @@ pie_recycle <- waste_audit %>%
   mutate(missorted = pieces_trash + pieces_compost) %>% 
   group_by(original_stream) %>% 
   summarize(sorted = sum(pieces_recycle),
-            missorted = sum(missorted)) %>% 
-  slice(1)
+            missorted = sum(missorted)) %>%
+  slice(2)
 pie_recycle
-slices <- c(31, 434)
+slices <- c(105, 339)
 lbls <- c("properly sorted", "missorted")
 percent <- slices / sum(slices) * 100
 percent
