@@ -36,7 +36,13 @@ waste_audit <- Spring_2022_February_Waste_Audit_Data_Sheet_xlsx_Figures_1_ %>%
          prop_pieces_compost = pieces_compost / total_piece_volume,
          prop_trash_weight = weight_trash_lbs / total_can_weight,
          prop_recycle_weight = weight_recycle_lbs / total_can_weight,
-         prop_compost_weight = weight_compost_lbs / total_can_weight)
+         prop_compost_weight = weight_compost_lbs / total_can_weight) %>%
+  mutate(restaurant = case_when(
+    can_number %in% c(23, 24, 25, 26, 27, 28) ~ "Zwelis",
+    can_number %in% c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22) ~ "Loop",
+    can_number %in% c(38, 39, 40, 30, 39, 31, 29, 47, 48, 45, 41, 35, 36, 37, 34, 32, 33) ~ "Plaza"
+  ))
+# as.character(restaurant)
 ```
 # Methodology
 
@@ -49,8 +55,8 @@ waste_audit %>%
             total_compost_pieces = sum(pieces_compost),
             total_trash_weight = sum(weight_trash_lbs), 
             total_recycle_weight = sum(weight_recycle_lbs),
-            total_compost_weight = sum(weight_compost_lbs)) %>% 
-  summarize(average_trash_weight = total_trash_weight / total_trash_pieces,
+            total_compost_weight = sum(weight_compost_lbs),
+            average_trash_weight = total_trash_weight / total_trash_pieces,
             average_recycle_weight = total_recycle_weight / total_recycle_pieces,
             average_compost_weight = total_compost_weight / total_compost_pieces)
 ```
@@ -64,7 +70,6 @@ waste_audit %>%
             avg_starting_pieces = mean(total_piece_volume))
 ```
 
-SOMETHING WRONG WITH THIS BAR GRAPH - TRASH & RECYCLING SHOULD BE THE TALLEST
 ```{r bar-plot-original-stream-piece-comparison}
 data <- waste_audit %>% 
   group_by(original_stream) %>% 
@@ -74,7 +79,7 @@ data <- waste_audit %>%
   select(total_trash, total_recycle, total_compost)
 data <- as.matrix(data)
 colnames(data) <- c("trash", "recycle", "compost")
-rownames(data) <- c("Recycle", "Trash", "Compost")
+rownames(data) <- c("Compost", "Recycle", "Trash")
 color <- c("black", "#3265ab", "#2ca816")
 barplot(t(data), beside = FALSE, col = color, ylim = c(0, 2500),
         main = "Actual Waste Composition of Trash, Recycling, and Compost (in pieces)", xlab = "Original Stream Designation", ylab = "Total Pieces")
@@ -85,7 +90,9 @@ barplot(t(data), beside = FALSE, col = color, ylim = c(0, 2500),
 ## Quantifying Missorted Waste
 ```{r missorted}
 waste_audit <- waste_audit %>% 
-  mutate(perc_missorted_c = case_when(original_stream == "trash" ~ (pieces_recycle + pieces_compost) / total_piece_volume, original_stream == "recycling" ~ (pieces_trash + pieces_compost) / total_piece_volume, original_stream == "compost" ~ (pieces_trash + pieces_recycle) / total_piece_volume))
+  mutate(perc_missorted_c = case_when(original_stream == "trash" ~ (pieces_recycle + pieces_compost) / total_piece_volume, original_stream == "recycling" ~ (pieces_trash + pieces_compost) / total_piece_volume, original_stream == "compost" ~ (pieces_trash + pieces_recycle) / total_piece_volume),
+         missorted_count = case_when(original_stream == "trash" ~ (pieces_recycle + pieces_compost), original_stream == "recycling" ~ (pieces_trash + pieces_compost), original_stream == "compost" ~ (pieces_trash + pieces_recycle)),
+         sorted_count = total_piece_volume - missorted_count)
 ```
 
 ```{r bar-plot-original-stream-percent}
@@ -97,7 +104,7 @@ makeup <- waste_audit %>%
   select(average_trash, average_recycle, average_compost)
 makeup <- as.matrix(makeup)
 colnames(makeup) <- c("trash", "recycle", "compost")
-rownames(makeup) <- c("Recycle", "Trash", "Compost")
+rownames(makeup) <- c("Compost", "Recycle", "Trash")
 color <- c("black", "#3265ab", "#2ca816")
 barplot(t(makeup), beside = FALSE, col = color, ylim = c(0, 1.1),
         main = "Percent Actual Waste Composition in Trash, Recycling, and Compost", xlab = "Original Stream Designation", ylab = "Percent")
@@ -274,7 +281,53 @@ legend("topleft", colnames(volume_bar), pch = 15, col = color, horiz = T, bty = 
 ```
 
 ## Differences in Location
-CREATE CODE FOR THIS SECTION
+```{r locaiton-contamination-table}
+location_contamination <- waste_audit %>%
+  group_by(restaurant) %>%
+  summarize(sorted = sum(sorted_count),
+    missorted = sum(missorted_count))
+
+location_contamination
+```
+
+contamination at Zweli's Café
+
+```{r loop-contamination}
+slices <- c(172, 254)
+lbls <- c("properly sorted", "missorted")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Contamination at Zweli's Café")
+```
+
+contamination at BC
+
+```{r loop-contamination}
+slices <- c(589, 938)
+lbls <- c("properly sorted", "missorted")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Contamination on BC Plaza")
+```
+
+contamination at the loop
+
+```{r loop-contamination}
+slices <- c(409, 668)
+lbls <- c("properly sorted", "missorted")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Contamination at The Loop")
+```
 
 separate based on Loop, Zweli's, and BC Plaza
 summary amounts -- how much waste sorted
@@ -317,7 +370,7 @@ more conservative than normal distribution; weight on tail ends
 mean(waste_audit$perc_missorted_c) + c(-1, 1) * 2.05 * sd(waste_audit$perc_missorted_c) / sqrt(44)
 ```
 
-may need to change the code above???
+may need to change the code above??? ASK LEAH
 tdist: 0.5332373, 0.6429630
 
 # Discussion
