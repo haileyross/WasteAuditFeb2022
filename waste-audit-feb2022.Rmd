@@ -278,7 +278,6 @@ pie(slices, labels = lbls, col = c("#2ca816", "black"), main = "Percent of Compo
 ```
 
 - volume of compostables
-    bar graph, value
     
 ```{r compost-volume-values}
 volume_bar <- waste_audit %>% 
@@ -346,10 +345,6 @@ lbls <- paste(lbls, pct)
 lbls <-paste(lbls, "%", sep = " ")
 pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Contamination at The Loop")
 ```
-
-separate based on Loop, Zweli's, and BC Plaza
-summary amounts -- how much waste sorted
-contamination rates
 
 # Bootstrap Sample
 
