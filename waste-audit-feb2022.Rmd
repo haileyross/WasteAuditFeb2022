@@ -112,7 +112,6 @@ legend("topleft", colnames(makeup), pch = 15, col = color, horiz = T, bty = "n")
 ```
 
 - percent of total waste that is missorted
-SEE T-DISTRIBUTION FOR STATISTICALLY VALID NUMBERS -- this pie is just raw data
 
 ```{r missorted-total-waste}
 pie_total <- waste_audit %>% 
@@ -130,6 +129,44 @@ pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Overall Contam
 
 # source: https://www.statmethods.net/graphs/pie.html
 ```
+
+- Bootstrap Sample OVERALL WASTE
+
+bootstrap sample
+
+```{r bootstrap-sample-with-compost}
+set.seed(201)
+boot_missorted <- waste_audit %>% 
+  specify(response = perc_missorted_c) %>% 
+  generate(reps = 10000, type = "bootstrap") %>% 
+  calculate(stat = "mean")
+```
+
+confidence interval
+
+```{r confidence-interval-with-compost}
+ci_boot_missorted <- get_ci(boot_missorted, level = 0.95)
+ci_boot_missorted
+```
+
+bootstrap distribution
+
+```{r bootstrap-vis-with-compost}
+visualize(boot_missorted) +
+  shade_ci(ci_boot_missorted) +
+  labs(title = "Simulated Bootstrap Distribution of Overall Missorted Waste", x = "Sample Mean", y = "Count")
+```
+
+$\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
+
+more conservative than normal distribution; weight on tail ends
+
+```{r t-distribution-with-compost, eval = FALSE}
+mean(waste_audit$perc_missorted_c) + c(-1, 1) * 2.05 * sd(waste_audit$perc_missorted_c) / sqrt(44)
+```
+
+tdist: 0.5332373, 0.6429630
+
 
 -percent of trash and recycling that is missorted (so we can compare last year)
 
@@ -154,6 +191,49 @@ lbls <- paste(lbls, pct)
 lbls <-paste(lbls, "%", sep = " ")
 pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Overall Contamination in both Trash and Recycling")
 ```
+
+- Bootstrap Sample TRASH + RECYCLING ONLY
+
+bootstrap sample
+
+```{r bootstrap-sample-trash-plus-recycling}
+boot_table_tr <- waste_audit %>%
+  slice(1:8, 11:19, 22:24, 27:30, 32, 34:36, 38:41)
+
+set.seed(201)
+boot_missorted_tr <- boot_table_tr %>%
+  specify(response = perc_missorted_c) %>% 
+  generate(reps = 10000, type = "bootstrap") %>% 
+  calculate(stat = "mean")
+```
+
+confidence interval
+
+```{r confidence-interval-trash-plus-recycling}
+ci_boot_missorted_tr <- get_ci(boot_missorted_tr, level = 0.95)
+ci_boot_missorted_tr
+```
+
+bootstrap distribution
+
+```{r bootstrap-vis-trash-plus-recycling}
+visualize(boot_missorted_tr) +
+  shade_ci(ci_boot_missorted_tr) +
+  labs(title = "Simulated Bootstrap Distribution of Overall Trash & Recycling", x = "Sample Mean", y = "Count")
+```
+
+$\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
+
+more conservative than normal distribution; weight on tail ends
+
+44 (total bags) - 12 (compost bags) = 32 (trash + recycling)
+
+```{r t-distribution-trash-plus-recycling, eval = FALSE}
+mean(boot_table_tr$perc_missorted_c) + c(-1, 1) * 2.05 * sd(boot_table_tr$perc_missorted_c) / sqrt(32)
+```
+
+tdist: 0.6078974, 0.7034598
+
 
 - percent of trash that is missorted
 
@@ -369,45 +449,6 @@ lbls <- paste(lbls, pct)
 lbls <-paste(lbls, "%", sep = " ")
 pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Contamination at The Loop")
 ```
-
-# Bootstrap Samples
-
-## OVERALL WASTE
-
-bootstrap sample
-
-```{r bootstrap-sample-with-compost}
-set.seed(201)
-boot_missorted <- waste_audit %>% 
-  specify(response = perc_missorted_c) %>% 
-  generate(reps = 10000, type = "bootstrap") %>% 
-  calculate(stat = "mean")
-```
-
-confidence interval
-
-```{r confidence-interval-with-compost}
-ci_boot_missorted <- get_ci(boot_missorted, level = 0.95)
-ci_boot_missorted
-```
-
-bootstrap distribution
-
-```{r bootstrap-vis-with-compost}
-visualize(boot_missorted) +
-  shade_ci(ci_boot_missorted) +
-  labs(title = "Simulated Bootstrap Distribution of Overall Missorted Waste", x = "Sample Mean", y = "Count")
-```
-
-$\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
-
-more conservative than normal distribution; weight on tail ends
-
-```{r t-distribution-with-compost, eval = FALSE}
-mean(waste_audit$perc_missorted_c) + c(-1, 1) * 2.05 * sd(waste_audit$perc_missorted_c) / sqrt(44)
-```
-
-tdist: 0.5332373, 0.6429630
 
 # Discussion
 
