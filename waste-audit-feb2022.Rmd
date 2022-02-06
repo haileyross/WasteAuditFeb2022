@@ -131,6 +131,30 @@ pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Overall Contam
 # source: https://www.statmethods.net/graphs/pie.html
 ```
 
+-percent of trash and recycling that is missorted (so we can compare last year)
+
+```{r missorted-trash-plus-recycling}
+pie_tandr <- waste_audit %>% 
+  group_by(original_stream) %>% 
+  summarize(sorted = sum(sorted_count),
+            missorted = sum(missorted_count)) %>%
+  slice(2:3)
+
+pie_tandr <- pie_tandr %>%
+  summarize(sorted = sum(sorted),
+            missorted = sum(missorted))
+
+pie_tandr
+slices <- c(888, 1677)
+lbls <- c("properly sorted", "missorted")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Overall Contamination in both Trash and Recycling")
+```
+
 - percent of trash that is missorted
 
 ```{r missorted-trash}
