@@ -571,9 +571,14 @@ pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Contamination 
 
 # Discussion
 
-- error: human error in sorting
-- error: some contamination spreads (e.g. containers filled with liquid)
-- discuss time of day and year that the data was collected
-- note: this does not account for all waste; waste disposed of in dorms, WU conveyor belt, BC, library, quad trash bins, gym (Red Mango), East Campus (Marketplace, dorms)
-- semi-random sampling (all recycling bins chosen, which dictated our choices in picking from the trash bins
-- error: subjectivity in what it means to be proximal to an exit door, stairwell mouth, etc.
+-	error: human error in sorting
+-	error: some contamination spreads (e.g. containers filled with liquid)
+-	error: varying time between locations on how long the waste receptacles were allowed to fill up between last emptying time and time of collection
+-	discuss time of day and year that the data was collected
+    -	Zweli's was having an open house, so the amount of waste collected does not necessarily represent a typical day
+-	note: this does not account for all waste; waste disposed of in dorms, WU conveyor belt, BC, library, quad trash bins, gym (Red Mango), East Campus (Marketplace, dorms)
+-	random sampling from the Plaza Big Bellies --- we got through all of the trash bags that we could with no particular order in mind
+-	common contaminants: clear plastic lids (some are compostable and others are recyclable)
+-	outstanding contaminants: batteries (2) -- these were run to Staples after the audit for proper disposal (limited resources on campus to dispose of these properly
+-	noted that Zweli's has confusing signage/organization of their compost and landfill bins
+
