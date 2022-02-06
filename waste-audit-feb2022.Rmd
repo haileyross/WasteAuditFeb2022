@@ -107,7 +107,7 @@ colnames(makeup) <- c("trash", "recycle", "compost")
 rownames(makeup) <- c("Compost", "Recycle", "Trash")
 color <- c("black", "#3265ab", "#2ca816")
 barplot(t(makeup), beside = FALSE, col = color, ylim = c(0, 1.1),
-        main = "Percent Actual Waste Composition in Trash, Recycling, and Compost", xlab = "Original Stream Designation", ylab = "Percent")
+        main = "Percent Actual Waste Composition in Trash, Recycling, and Compost", xlab = "Original Stream Designation", ylab = "Proportion")
 legend("topleft", colnames(makeup), pch = 15, col = color, horiz = T, bty = "n")
 ```
 
@@ -154,7 +154,7 @@ bootstrap distribution
 ```{r bootstrap-vis-with-compost}
 visualize(boot_missorted) +
   shade_ci(ci_boot_missorted) +
-  labs(title = "Simulated Bootstrap Distribution of Overall Missorted Waste", x = "Sample Mean", y = "Count")
+  labs(title = "Simulated Bootstrap Distribution of Overall Missorted Waste", x = "Sample Mean Missorted Overall Waste", y = "Count")
 ```
 
 $\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
@@ -219,7 +219,7 @@ bootstrap distribution
 ```{r bootstrap-vis-trash-plus-recycling}
 visualize(boot_missorted_tr) +
   shade_ci(ci_boot_missorted_tr) +
-  labs(title = "Simulated Bootstrap Distribution of Overall Trash & Recycling", x = "Sample Mean", y = "Count")
+  labs(title = "Simulated Bootstrap Distribution of Overall Trash & Recycling", x = "Sample Mean Missorted Trash & Recycling", y = "Count")
 ```
 
 $\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
@@ -280,7 +280,7 @@ bootstrap distribution
 ```{r bootstrap-vis-trash}
 visualize(boot_missorted_trash) +
   shade_ci(ci_boot_missorted_trash) +
-  labs(title = "Simulated Bootstrap Distribution of Missorted Trash", x = "Sample Mean", y = "Count")
+  labs(title = "Simulated Bootstrap Distribution of Missorted Trash", x = "Sample Mean Missorted Trash", y = "Count")
 ```
 
 $\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
@@ -340,7 +340,7 @@ bootstrap distribution
 ```{r bootstrap-vis-recycling}
 visualize(boot_missorted_recycling) +
   shade_ci(ci_boot_missorted_recycling) +
-  labs(title = "Simulated Bootstrap Distribution of Missorted Recycling", x = "Sample Mean", y = "Count")
+  labs(title = "Simulated Bootstrap Distribution of Missorted Recycling", x = "Sample Mean Missorted Recycling", y = "Count")
 ```
 
 $\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
@@ -400,7 +400,7 @@ bootstrap distribution
 ```{r bootstrap-vis-compost}
 visualize(boot_missorted_compost) +
   shade_ci(ci_boot_missorted_compost) +
-  labs(title = "Simulated Bootstrap Distribution of Missorted Compost", x = "Sample Mean", y = "Count")
+  labs(title = "Simulated Bootstrap Distribution of Missorted Compost", x = "Sample Mean Missorted Compost", y = "Count")
 ```
 
 $\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
