@@ -572,7 +572,7 @@ pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Contamination 
 ## Comparison Between 2021 and Feb 2022 Results
 
 ```{r 2021-feb2022}
-con <- data.frame(year = c(2021, 2022),
+con <- data.frame(year = c("2021", "2022"),
   contamination_rate = c(74, 61))
 
 ggplot(con) +
