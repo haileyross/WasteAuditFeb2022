@@ -521,7 +521,7 @@ legend("topleft", colnames(volume_bar), pch = 15, col = color, horiz = T, bty = 
 ```
 
 ## Differences in Location
-```{r locaiton-contamination-table}
+```{r location-contamination-table}
 location_contamination <- waste_audit %>%
   group_by(restaurant) %>%
   summarize(sorted = sum(sorted_count),
@@ -567,6 +567,18 @@ pct <- round(percent)
 lbls <- paste(lbls, pct)
 lbls <-paste(lbls, "%", sep = " ")
 pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Contamination at The Loop")
+```
+
+## Comparison Between 2021 and Feb 2022 Results
+
+```{r 2021-feb2022}
+con <- data.frame(year = c(2021, 2022),
+  contamination_rate = c(74, 61))
+
+ggplot(con) +
+    geom_bar( aes(x=year, y=contamination_rate), stat="identity", fill="#cc2900", width = 0.5) +
+    ggtitle("Yearly Contamination Rate Comparison") +
+    ylim(0, 100)
 ```
 
 # Discussion
