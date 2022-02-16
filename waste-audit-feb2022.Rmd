@@ -576,9 +576,10 @@ con <- data.frame(year = c("2021", "2022"),
   contamination_rate = c(74, 61))
 
 ggplot(con) +
-    geom_bar( aes(x=year, y=contamination_rate), stat="identity", fill="#cc2900", width = 0.5) +
+    geom_bar( aes(x=year, y=contamination_rate), stat="identity", fill="#2ca816", width = 0.5) +
     ggtitle("Yearly Contamination Rate Comparison") +
-    ylim(0, 100)
+    ylim(0, 100) +
+  theme_minimal()
 ```
 
 # Discussion
