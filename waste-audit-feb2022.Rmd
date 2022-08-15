@@ -24,7 +24,6 @@ library(robotstxt)
 library(rvest)
 library(httr)
 library(tinytex)
-library(sf)
 ```
 
 ```{r upload-and-clean-data}
@@ -379,7 +378,7 @@ bootstrap sample
 
 ```{r bootstrap-sample-compost}
 boot_table_compost <- waste_audit %>%
-  slice(9, 10, 20, 21, 25, 26, 31, 33, 37, 45, 47, 48)
+  slice(9, 10, 20, 21, 25, 26, 31, 33, 37, 42, 43, 44)
 
 set.seed(201)
 boot_missorted_compost <- boot_table_compost %>%
@@ -387,7 +386,7 @@ boot_missorted_compost <- boot_table_compost %>%
   generate(reps = 10000, type = "bootstrap") %>% 
   calculate(stat = "mean")
 ```
-
+ 
 confidence interval
 
 ```{r confidence-interval-compost}
@@ -411,7 +410,7 @@ more conservative than normal distribution; weight on tail ends
 mean(boot_table_compost$perc_missorted_c) + c(-1, 1) * 2.05 * sd(boot_table_compost$perc_missorted_c) / sqrt(12)
 ```
 
-tdist: 0.2939167, 0.4907182
+tdist: 0.3134176, 0.5023647
 
 
 ## Campus Compost
@@ -596,4 +595,3 @@ ggplot(con) +
 -	common contaminants: clear plastic lids (some are compostable and others are recyclable)
 -	outstanding contaminants: batteries (2) -- these were run to Staples after the audit for proper disposal (limited resources on campus to dispose of these properly
 -	noted that Zweli's has confusing signage/organization of their compost and landfill bins
-
