@@ -163,3 +163,242 @@ mean(waste_audit$perc_missorted_c) + c(-1, 1) * 2.05 * sd(waste_audit$perc_misso
 ```
 
 tdist: 0.5465229, 0.7112063
+
+-percent of trash and recycling that is missorted (so we can compare last year)
+
+```{r missorted-trash-plus-recycling}
+pie_tandr <- waste_audit %>% 
+  group_by(original_stream) %>% 
+  summarize(sorted = sum(sorted_count),
+            missorted = sum(missorted_count)) %>%
+  slice(2:3)
+pie_tandr <- pie_tandr %>%
+  summarize(sorted = sum(sorted),
+            missorted = sum(missorted))
+pie_tandr
+slices <- c(36, 130)
+lbls <- c("properly sorted", "missorted")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Overall Contamination in both Trash and Recycling")
+```
+
+- Bootstrap Sample TRASH + RECYCLING ONLY
+
+bootstrap sample
+
+```{r bootstrap-sample-trash-plus-recycling}
+boot_table_tr <- waste_audit %>%
+  slice(1:8, 11:19, 22:24, 27:30, 32, 34:36, 38:41)
+set.seed(201)
+boot_missorted_tr <- boot_table_tr %>%
+  specify(response = perc_missorted_c) %>% 
+  generate(reps = 10000, type = "bootstrap") %>% 
+  calculate(stat = "mean")
+```
+
+confidence interval
+
+```{r confidence-interval-trash-plus-recycling}
+ci_boot_missorted_tr <- get_ci(boot_missorted_tr, level = 0.95)
+ci_boot_missorted_tr
+```
+
+bootstrap distribution
+
+```{r bootstrap-vis-trash-plus-recycling}
+visualize(boot_missorted_tr) +
+  shade_ci(ci_boot_missorted_tr) +
+  labs(title = "Simulated Bootstrap Distribution of Overall Trash & Recycling", x = "Sample Mean Missorted Trash & Recycling", y = "Count")
+```
+
+$\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
+
+more conservative than normal distribution; weight on tail ends
+
+```{r t-distribution-trash-plus-recycling, eval = FALSE}
+mean(boot_table_tr$perc_missorted_c) + c(-1, 1) * 2.05 * sd(boot_table_tr$perc_missorted_c) / sqrt(32)
+```
+
+tdist: 0.6698542, 0.7857089
+
+
+- percent of trash that is missorted
+
+```{r missorted-trash}
+pie_trash <- waste_audit %>% 
+  mutate(missorted = weight_recycle_lbs + weight_compost_lbs) %>% 
+  group_by(original_stream) %>% 
+  summarize(sorted = sum(weight_trash_lbs),
+            missorted = sum(missorted)) %>%
+  slice(3)
+pie_trash
+slices <- c(30.8, 110.8)
+lbls <- c("properly sorted", "missorted")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Missorted Trash")
+```
+
+- Bootstrap Sample TRASH ONLY
+
+bootstrap sample
+
+```{r bootstrap-sample-trash}
+boot_table_trash <- waste_audit %>%
+  slice(1:6, 11:17, 22:24, 27:29, 32, 35, 38:41)
+set.seed(201)
+boot_missorted_trash <- boot_table_trash %>%
+  specify(response = perc_missorted_c) %>% 
+  generate(reps = 10000, type = "bootstrap") %>% 
+  calculate(stat = "mean")
+```
+
+confidence interval
+
+```{r confidence-interval-trash}
+ci_boot_missorted_trash <- get_ci(boot_missorted_trash, level = 0.95)
+ci_boot_missorted_trash
+```
+
+bootstrap distribution
+
+```{r bootstrap-vis-trash}
+visualize(boot_missorted_trash) +
+  shade_ci(ci_boot_missorted_trash) +
+  labs(title = "Simulated Bootstrap Distribution of Missorted Trash", x = "Sample Mean Missorted Trash", y = "Count")
+```
+
+$\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
+
+more conservative than normal distribution; weight on tail ends
+
+```{r t-distribution-trash, eval = FALSE}
+mean(boot_table_trash$perc_missorted_c) + c(-1, 1) * 2.05 * sd(boot_table_trash$perc_missorted_c) / sqrt(25)
+```
+
+tdist: 0.6506066, 0.7820920
+
+- percent of recycling that is missorted
+    
+```{r missorted-recycle}
+pie_recycle <- waste_audit %>% 
+  mutate(missorted = weight_trash_lbs + weight_compost_lbs) %>% 
+  group_by(original_stream) %>% 
+  summarize(sorted = sum(weight_recycle_lbs),
+            missorted = sum(missorted)) %>%
+  slice(2)
+pie_recycle
+slices <- c(5.2, 19.2)
+lbls <- c("properly sorted", "missorted")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Missorted Recycle")
+```
+
+- Bootstrap Sample RECYCLING ONLY
+
+bootstrap sample
+
+```{r bootstrap-sample-recycling}
+boot_table_recycling <- waste_audit %>%
+  slice(7:8, 18:19, 30, 34, 36)
+set.seed(201)
+boot_missorted_recycling <- boot_table_recycling %>%
+  specify(response = perc_missorted_c) %>% 
+  generate(reps = 10000, type = "bootstrap") %>% 
+  calculate(stat = "mean")
+```
+
+confidence interval
+
+```{r confidence-interval-recycling}
+ci_boot_missorted_recycling <- get_ci(boot_missorted_recycling, level = 0.95)
+ci_boot_missorted_recycling
+```
+
+bootstrap distribution
+
+```{r bootstrap-vis-recycling}
+visualize(boot_missorted_recycling) +
+  shade_ci(ci_boot_missorted_recycling) +
+  labs(title = "Simulated Bootstrap Distribution of Missorted Recycling", x = "Sample Mean Missorted Recycling", y = "Count")
+```
+
+$\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
+
+more conservative than normal distribution; weight on tail ends
+
+```{r t-distribution-recycling, eval = FALSE}
+mean(boot_table_recycling$perc_missorted_c) + c(-1, 1) * 2.05 * sd(boot_table_recycling$perc_missorted_c) / sqrt(7)
+```
+
+tdist:0.6420546, 0.8951677
+
+- percent of compost that is missorted
+    
+```{r missorted-compost}
+pie_compost <- waste_audit %>% 
+  mutate(missorted = weight_trash_lbs + weight_recycle_lbs) %>% 
+  group_by(original_stream) %>% 
+  summarize(sorted = sum(weight_compost_lbs),
+            missorted = sum(missorted)) %>% 
+  slice(1)
+pie_compost
+slices <- c(14.5, 8.7)
+lbls <- c("properly sorted", "missorted")
+percent <- slices / sum(slices) * 100
+percent
+pct <- round(percent)
+lbls <- paste(lbls, pct)
+lbls <-paste(lbls, "%", sep = " ")
+pie(slices, labels = lbls, col = c("#2ca816", "#cc2900"), main = "Missorted Compost")
+```
+
+- Bootstrap Sample COMPOST ONLY
+
+bootstrap sample
+
+```{r bootstrap-sample-compost}
+boot_table_compost <- waste_audit %>%
+  slice(9, 10, 20, 21, 25, 26, 31, 33, 37, 42, 43, 44)
+set.seed(201)
+boot_missorted_compost <- boot_table_compost %>%
+  specify(response = perc_missorted_c) %>% 
+  generate(reps = 10000, type = "bootstrap") %>% 
+  calculate(stat = "mean")
+```
+
+confidence interval
+
+```{r confidence-interval-compost}
+ci_boot_missorted_compost <- get_ci(boot_missorted_compost, level = 0.95)
+ci_boot_missorted_compost
+```
+
+bootstrap distribution
+
+```{r bootstrap-vis-compost}
+visualize(boot_missorted_compost) +
+  shade_ci(ci_boot_missorted_compost) +
+  labs(title = "Simulated Bootstrap Distribution of Missorted Compost", x = "Sample Mean Missorted Compost", y = "Count")
+```
+
+$\bar{x} \pm t^*\frac{s}{\sqrt{n}}$
+
+more conservative than normal distribution; weight on tail ends
+
+```{r t-distribution-compost, eval = FALSE}
+mean(boot_table_compost$perc_missorted_c) + c(-1, 1) * 2.05 * sd(boot_table_compost$perc_missorted_c) / sqrt(12)
+```
+
+tdist: 0.1769003, 0.5532716
